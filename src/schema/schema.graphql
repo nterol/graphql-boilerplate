@@ -22,6 +22,8 @@ type Query {
     orderBy: GraphOrderByInput
   ): [Graph!]!
 
+  graph(id: ID!): Graph!
+
   summits(
     query: String
     first: Int

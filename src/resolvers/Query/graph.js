@@ -19,7 +19,15 @@ const graphQuery = {
     }
 
     return prisma.query.graphs(opArgs, info);
-  }
+  }, 
+  graph: (parent,
+    { id },
+    { prisma },
+    info) => {
+      const opArgs = {where: {id}};
+
+      return prisma.query.graph(opArgs, info);
+    }
 };
 
 export default graphQuery;
