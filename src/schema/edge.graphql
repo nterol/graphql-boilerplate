@@ -1,0 +1,27 @@
+type Edge {
+  id: ID!
+  author: User!
+  graph: Graph!
+  source: Summit!
+  target: Summit!
+  title: String!
+  body: String
+  updatedAt: String!
+  createdAt: String!
+}
+
+input CreateEdgeInput {
+  graph: ID!
+  source: ID!
+  target: ID!
+  title: String!
+  body: String
+}
+
+input UpdateEdgeInput {
+  graph: ID
+  source: ID
+  target: ID
+  title: String
+  body: String
+}

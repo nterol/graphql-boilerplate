@@ -1,6 +1,6 @@
-import getUserId from "../utils/getUserId";
+import getUserId from "../../utils/getUserId";
 
-const Query = {
+const userQuery = {
   users: (parent, { query, first, skip, after, orderBy }, { prisma }, info) => {
     const opArgs = {
       first,
@@ -9,7 +9,6 @@ const Query = {
       orderBy
     };
     if (query) {
-      console.log(query);
       opArgs.where = {
         OR: [{ name_contains: query }, { email_contains: query }]
       };
@@ -26,4 +25,4 @@ const Query = {
   }
 };
 
-export { Query as default };
+export default userQuery;

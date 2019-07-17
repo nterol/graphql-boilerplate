@@ -3,6 +3,42 @@ type User {
   name: String!
   email: String! @unique
   password: String!
+  graphs: [Graph!]! @relation(name: "GraphToUser", onDelete: CASCADE)
+  summits: [Summit!]! @relation(name: "SummitToUser", onDelete: CASCADE)
+  edges: [Edge!]! @relation(name: "EdgeToUser", onDelete: CASCADE)
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+type Graph {
+  id: ID! @id
+  title: String!
+  author: User! @relation(name: "GraphToUser", onDelete: SET_NULL)
+  summits: [Summit!]! @relation(name: "GraphToSummit", onDelete: SET_NULL)
+  edges: [Edge!]! @relation(name: "GraphToEdge", onDelete: CASCADE)
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+type Summit {
+  id: ID! @id
+  author: User! @relation(name: "SummitToUser", onDelete: SET_NULL)
+  graphs: [Graph!]! @relation(name: "GraphToSummit", onDelete: SET_NULL)
+  edges: [Edge!]! @relation(name: "EdgeToSummit", onDelete: CASCADE)
+  title: String!
+  body: String!
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+type Edge {
+  id: ID! @id
+  author: User! @relation(name: "EdgeToUser", onDelete: SET_NULL)
+  graph: Graph! @relation(name: "GraphToEdge", onDelete: SET_NULL)
+  source: Summit! @relation(name: "EdgeToSummit", onDelete: SET_NULL)
+  target: Summit! @relation(name: "EdgeToTarget", onDelete: SET_NULL)
+  title: String!
+  body: String
   updatedAt: DateTime! @updatedAt
   createdAt: DateTime! @createdAt
 }

@@ -1,0 +1,23 @@
+type Summit {
+  id: ID!
+  author: User!
+  graphs: [Graph!]!
+  edges: [Edge!]!
+  target: [Edge!]!
+  title: String!
+  body: String!
+  updatedAt: String!
+  createdAt: String!
+}
+
+input CreateSummitInput {
+  graph: ID
+  title: String!
+  body: String!
+}
+
+input UpdateSummitInput {
+  graph: ID
+  title: String
+  body: String
+}

@@ -1,0 +1,7 @@
+type Source {
+  id: ID!
+  edge: Edge!
+  summit: Summit!
+  updatedAt: String!
+  createdAt: String!
+}

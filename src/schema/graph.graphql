@@ -1,0 +1,17 @@
+type Graph {
+  id: ID!
+  user: User!
+  title: String!
+  summits: [Summit!]!
+  edges: [Edge!]!
+  updatedAt: String!
+  createdAt: String!
+}
+
+input CreateGraphInput {
+  title: String!
+}
+
+input UpdateGraphInput {
+  title: String!
+}

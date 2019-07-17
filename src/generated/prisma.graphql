@@ -1,11 +1,15 @@
 # source: http://localhost:4466
-# timestamp: Fri Jun 14 2019 21:54:30 GMT+0200 (CEST)
+# timestamp: Thu Jun 27 2019 12:50:07 GMT+0200 (CEST)
 
-type AggregateComment {
+type AggregateEdge {
   count: Int!
 }
 
-type AggregatePost {
+type AggregateGraph {
+  count: Int!
+}
+
+type AggregateSummit {
   count: Int!
 }
 
@@ -18,90 +22,121 @@ type BatchPayload {
   count: Long!
 }
 
-type Comment implements Node {
+scalar DateTime
+
+type Edge implements Node {
   id: ID!
-  text: String!
-  post: Post!
   author: User!
+  graph: Graph!
+  source: Summit!
+  target: Summit!
+  title: String!
+  body: String
   updatedAt: DateTime!
   createdAt: DateTime!
 }
 
 """A connection to a list of items."""
-type CommentConnection {
+type EdgeConnection {
   """Information to aid in pagination."""
   pageInfo: PageInfo!
 
   """A list of edges."""
-  edges: [CommentEdge]!
-  aggregate: AggregateComment!
+  edges: [EdgeEdge]!
+  aggregate: AggregateEdge!
 }
 
-input CommentCreateInput {
+input EdgeCreateInput {
   id: ID
-  text: String!
-  post: PostCreateOneWithoutCommentsInput!
-  author: UserCreateOneWithoutCommentsInput!
+  title: String!
+  body: String
+  author: UserCreateOneWithoutEdgesInput!
+  graph: GraphCreateOneWithoutEdgesInput!
+  source: SummitCreateOneWithoutEdgesInput!
+  target: SummitCreateOneInput!
 }
 
-input CommentCreateManyWithoutAuthorInput {
-  create: [CommentCreateWithoutAuthorInput!]
-  connect: [CommentWhereUniqueInput!]
+input EdgeCreateManyWithoutAuthorInput {
+  create: [EdgeCreateWithoutAuthorInput!]
+  connect: [EdgeWhereUniqueInput!]
 }
 
-input CommentCreateManyWithoutPostInput {
-  create: [CommentCreateWithoutPostInput!]
-  connect: [CommentWhereUniqueInput!]
+input EdgeCreateManyWithoutGraphInput {
+  create: [EdgeCreateWithoutGraphInput!]
+  connect: [EdgeWhereUniqueInput!]
 }
 
-input CommentCreateWithoutAuthorInput {
+input EdgeCreateManyWithoutSourceInput {
+  create: [EdgeCreateWithoutSourceInput!]
+  connect: [EdgeWhereUniqueInput!]
+}
+
+input EdgeCreateWithoutAuthorInput {
   id: ID
-  text: String!
-  post: PostCreateOneWithoutCommentsInput!
+  title: String!
+  body: String
+  graph: GraphCreateOneWithoutEdgesInput!
+  source: SummitCreateOneWithoutEdgesInput!
+  target: SummitCreateOneInput!
 }
 
-input CommentCreateWithoutPostInput {
+input EdgeCreateWithoutGraphInput {
   id: ID
-  text: String!
-  author: UserCreateOneWithoutCommentsInput!
+  title: String!
+  body: String
+  author: UserCreateOneWithoutEdgesInput!
+  source: SummitCreateOneWithoutEdgesInput!
+  target: SummitCreateOneInput!
+}
+
+input EdgeCreateWithoutSourceInput {
+  id: ID
+  title: String!
+  body: String
+  author: UserCreateOneWithoutEdgesInput!
+  graph: GraphCreateOneWithoutEdgesInput!
+  target: SummitCreateOneInput!
 }
 
 """An edge in a connection."""
-type CommentEdge {
+type EdgeEdge {
   """The item at the end of the edge."""
-  node: Comment!
+  node: Edge!
 
   """A cursor for use in pagination."""
   cursor: String!
 }
 
-enum CommentOrderByInput {
+enum EdgeOrderByInput {
   id_ASC
   id_DESC
-  text_ASC
-  text_DESC
+  title_ASC
+  title_DESC
+  body_ASC
+  body_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
   createdAt_DESC
 }
 
-type CommentPreviousValues {
+type EdgePreviousValues {
   id: ID!
-  text: String!
+  title: String!
+  body: String
   updatedAt: DateTime!
   createdAt: DateTime!
 }
 
-input CommentScalarWhereInput {
+input EdgeScalarWhereInput {
   """Logical AND on all given filters."""
-  AND: [CommentScalarWhereInput!]
+  AND: [EdgeScalarWhereInput!]
 
   """Logical OR on all given filters."""
-  OR: [CommentScalarWhereInput!]
+  OR: [EdgeScalarWhereInput!]
 
   """Logical NOT on all given filters combined by AND."""
-  NOT: [CommentScalarWhereInput!]
+  NOT: [EdgeScalarWhereInput!]
   id: ID
 
   """All values that are not equal to given value."""
@@ -142,46 +177,86 @@ input CommentScalarWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
-  text: String
+  title: String
 
   """All values that are not equal to given value."""
-  text_not: String
+  title_not: String
 
   """All values that are contained in given list."""
-  text_in: [String!]
+  title_in: [String!]
 
   """All values that are not contained in given list."""
-  text_not_in: [String!]
+  title_not_in: [String!]
 
   """All values less than the given value."""
-  text_lt: String
+  title_lt: String
 
   """All values less than or equal the given value."""
-  text_lte: String
+  title_lte: String
 
   """All values greater than the given value."""
-  text_gt: String
+  title_gt: String
 
   """All values greater than or equal the given value."""
-  text_gte: String
+  title_gte: String
 
   """All values containing the given string."""
-  text_contains: String
+  title_contains: String
 
   """All values not containing the given string."""
-  text_not_contains: String
+  title_not_contains: String
 
   """All values starting with the given string."""
-  text_starts_with: String
+  title_starts_with: String
 
   """All values not starting with the given string."""
-  text_not_starts_with: String
+  title_not_starts_with: String
 
   """All values ending with the given string."""
-  text_ends_with: String
+  title_ends_with: String
 
   """All values not ending with the given string."""
-  text_not_ends_with: String
+  title_not_ends_with: String
+  body: String
+
+  """All values that are not equal to given value."""
+  body_not: String
+
+  """All values that are contained in given list."""
+  body_in: [String!]
+
+  """All values that are not contained in given list."""
+  body_not_in: [String!]
+
+  """All values less than the given value."""
+  body_lt: String
+
+  """All values less than or equal the given value."""
+  body_lte: String
+
+  """All values greater than the given value."""
+  body_gt: String
+
+  """All values greater than or equal the given value."""
+  body_gte: String
+
+  """All values containing the given string."""
+  body_contains: String
+
+  """All values not containing the given string."""
+  body_not_contains: String
+
+  """All values starting with the given string."""
+  body_starts_with: String
+
+  """All values not starting with the given string."""
+  body_not_starts_with: String
+
+  """All values ending with the given string."""
+  body_ends_with: String
+
+  """All values not ending with the given string."""
+  body_not_ends_with: String
   updatedAt: DateTime
 
   """All values that are not equal to given value."""
@@ -228,24 +303,26 @@ input CommentScalarWhereInput {
   createdAt_gte: DateTime
 }
 
-type CommentSubscriptionPayload {
+type EdgeSubscriptionPayload {
   mutation: MutationType!
-  node: Comment
+  node: Edge
   updatedFields: [String!]
-  previousValues: CommentPreviousValues
+  previousValues: EdgePreviousValues
 }
 
-input CommentSubscriptionWhereInput {
+input EdgeSubscriptionWhereInput {
   """Logical AND on all given filters."""
-  AND: [CommentSubscriptionWhereInput!]
+  AND: [EdgeSubscriptionWhereInput!]
 
   """Logical OR on all given filters."""
-  OR: [CommentSubscriptionWhereInput!]
+  OR: [EdgeSubscriptionWhereInput!]
 
   """Logical NOT on all given filters combined by AND."""
-  NOT: [CommentSubscriptionWhereInput!]
+  NOT: [EdgeSubscriptionWhereInput!]
 
-  """The subscription event gets dispatched when it's listed in mutation_in"""
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
   mutation_in: [MutationType!]
 
   """
@@ -262,93 +339,135 @@ input CommentSubscriptionWhereInput {
   The subscription event gets only dispatched when some of the field names included in this list have been updated
   """
   updatedFields_contains_some: [String!]
-  node: CommentWhereInput
+  node: EdgeWhereInput
 }
 
-input CommentUpdateInput {
-  text: String
-  post: PostUpdateOneRequiredWithoutCommentsInput
-  author: UserUpdateOneRequiredWithoutCommentsInput
+input EdgeUpdateInput {
+  title: String
+  body: String
+  author: UserUpdateOneRequiredWithoutEdgesInput
+  graph: GraphUpdateOneRequiredWithoutEdgesInput
+  source: SummitUpdateOneRequiredWithoutEdgesInput
+  target: SummitUpdateOneRequiredInput
 }
 
-input CommentUpdateManyDataInput {
-  text: String
+input EdgeUpdateManyDataInput {
+  title: String
+  body: String
 }
 
-input CommentUpdateManyMutationInput {
-  text: String
+input EdgeUpdateManyMutationInput {
+  title: String
+  body: String
 }
 
-input CommentUpdateManyWithoutAuthorInput {
-  create: [CommentCreateWithoutAuthorInput!]
-  connect: [CommentWhereUniqueInput!]
-  set: [CommentWhereUniqueInput!]
-  disconnect: [CommentWhereUniqueInput!]
-  delete: [CommentWhereUniqueInput!]
-  update: [CommentUpdateWithWhereUniqueWithoutAuthorInput!]
-  updateMany: [CommentUpdateManyWithWhereNestedInput!]
-  deleteMany: [CommentScalarWhereInput!]
-  upsert: [CommentUpsertWithWhereUniqueWithoutAuthorInput!]
+input EdgeUpdateManyWithoutAuthorInput {
+  create: [EdgeCreateWithoutAuthorInput!]
+  connect: [EdgeWhereUniqueInput!]
+  set: [EdgeWhereUniqueInput!]
+  disconnect: [EdgeWhereUniqueInput!]
+  delete: [EdgeWhereUniqueInput!]
+  update: [EdgeUpdateWithWhereUniqueWithoutAuthorInput!]
+  updateMany: [EdgeUpdateManyWithWhereNestedInput!]
+  deleteMany: [EdgeScalarWhereInput!]
+  upsert: [EdgeUpsertWithWhereUniqueWithoutAuthorInput!]
 }
 
-input CommentUpdateManyWithoutPostInput {
-  create: [CommentCreateWithoutPostInput!]
-  connect: [CommentWhereUniqueInput!]
-  set: [CommentWhereUniqueInput!]
-  disconnect: [CommentWhereUniqueInput!]
-  delete: [CommentWhereUniqueInput!]
-  update: [CommentUpdateWithWhereUniqueWithoutPostInput!]
-  updateMany: [CommentUpdateManyWithWhereNestedInput!]
-  deleteMany: [CommentScalarWhereInput!]
-  upsert: [CommentUpsertWithWhereUniqueWithoutPostInput!]
+input EdgeUpdateManyWithoutGraphInput {
+  create: [EdgeCreateWithoutGraphInput!]
+  connect: [EdgeWhereUniqueInput!]
+  set: [EdgeWhereUniqueInput!]
+  disconnect: [EdgeWhereUniqueInput!]
+  delete: [EdgeWhereUniqueInput!]
+  update: [EdgeUpdateWithWhereUniqueWithoutGraphInput!]
+  updateMany: [EdgeUpdateManyWithWhereNestedInput!]
+  deleteMany: [EdgeScalarWhereInput!]
+  upsert: [EdgeUpsertWithWhereUniqueWithoutGraphInput!]
 }
 
-input CommentUpdateManyWithWhereNestedInput {
-  where: CommentScalarWhereInput!
-  data: CommentUpdateManyDataInput!
+input EdgeUpdateManyWithoutSourceInput {
+  create: [EdgeCreateWithoutSourceInput!]
+  connect: [EdgeWhereUniqueInput!]
+  set: [EdgeWhereUniqueInput!]
+  disconnect: [EdgeWhereUniqueInput!]
+  delete: [EdgeWhereUniqueInput!]
+  update: [EdgeUpdateWithWhereUniqueWithoutSourceInput!]
+  updateMany: [EdgeUpdateManyWithWhereNestedInput!]
+  deleteMany: [EdgeScalarWhereInput!]
+  upsert: [EdgeUpsertWithWhereUniqueWithoutSourceInput!]
 }
 
-input CommentUpdateWithoutAuthorDataInput {
-  text: String
-  post: PostUpdateOneRequiredWithoutCommentsInput
+input EdgeUpdateManyWithWhereNestedInput {
+  where: EdgeScalarWhereInput!
+  data: EdgeUpdateManyDataInput!
 }
 
-input CommentUpdateWithoutPostDataInput {
-  text: String
-  author: UserUpdateOneRequiredWithoutCommentsInput
+input EdgeUpdateWithoutAuthorDataInput {
+  title: String
+  body: String
+  graph: GraphUpdateOneRequiredWithoutEdgesInput
+  source: SummitUpdateOneRequiredWithoutEdgesInput
+  target: SummitUpdateOneRequiredInput
 }
 
-input CommentUpdateWithWhereUniqueWithoutAuthorInput {
-  where: CommentWhereUniqueInput!
-  data: CommentUpdateWithoutAuthorDataInput!
+input EdgeUpdateWithoutGraphDataInput {
+  title: String
+  body: String
+  author: UserUpdateOneRequiredWithoutEdgesInput
+  source: SummitUpdateOneRequiredWithoutEdgesInput
+  target: SummitUpdateOneRequiredInput
 }
 
-input CommentUpdateWithWhereUniqueWithoutPostInput {
-  where: CommentWhereUniqueInput!
-  data: CommentUpdateWithoutPostDataInput!
+input EdgeUpdateWithoutSourceDataInput {
+  title: String
+  body: String
+  author: UserUpdateOneRequiredWithoutEdgesInput
+  graph: GraphUpdateOneRequiredWithoutEdgesInput
+  target: SummitUpdateOneRequiredInput
 }
 
-input CommentUpsertWithWhereUniqueWithoutAuthorInput {
-  where: CommentWhereUniqueInput!
-  update: CommentUpdateWithoutAuthorDataInput!
-  create: CommentCreateWithoutAuthorInput!
+input EdgeUpdateWithWhereUniqueWithoutAuthorInput {
+  where: EdgeWhereUniqueInput!
+  data: EdgeUpdateWithoutAuthorDataInput!
 }
 
-input CommentUpsertWithWhereUniqueWithoutPostInput {
-  where: CommentWhereUniqueInput!
-  update: CommentUpdateWithoutPostDataInput!
-  create: CommentCreateWithoutPostInput!
+input EdgeUpdateWithWhereUniqueWithoutGraphInput {
+  where: EdgeWhereUniqueInput!
+  data: EdgeUpdateWithoutGraphDataInput!
 }
 
-input CommentWhereInput {
+input EdgeUpdateWithWhereUniqueWithoutSourceInput {
+  where: EdgeWhereUniqueInput!
+  data: EdgeUpdateWithoutSourceDataInput!
+}
+
+input EdgeUpsertWithWhereUniqueWithoutAuthorInput {
+  where: EdgeWhereUniqueInput!
+  update: EdgeUpdateWithoutAuthorDataInput!
+  create: EdgeCreateWithoutAuthorInput!
+}
+
+input EdgeUpsertWithWhereUniqueWithoutGraphInput {
+  where: EdgeWhereUniqueInput!
+  update: EdgeUpdateWithoutGraphDataInput!
+  create: EdgeCreateWithoutGraphInput!
+}
+
+input EdgeUpsertWithWhereUniqueWithoutSourceInput {
+  where: EdgeWhereUniqueInput!
+  update: EdgeUpdateWithoutSourceDataInput!
+  create: EdgeCreateWithoutSourceInput!
+}
+
+input EdgeWhereInput {
   """Logical AND on all given filters."""
-  AND: [CommentWhereInput!]
+  AND: [EdgeWhereInput!]
 
   """Logical OR on all given filters."""
-  OR: [CommentWhereInput!]
+  OR: [EdgeWhereInput!]
 
   """Logical NOT on all given filters combined by AND."""
-  NOT: [CommentWhereInput!]
+  NOT: [EdgeWhereInput!]
   id: ID
 
   """All values that are not equal to given value."""
@@ -389,46 +508,86 @@ input CommentWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
-  text: String
+  title: String
 
   """All values that are not equal to given value."""
-  text_not: String
+  title_not: String
 
   """All values that are contained in given list."""
-  text_in: [String!]
+  title_in: [String!]
 
   """All values that are not contained in given list."""
-  text_not_in: [String!]
+  title_not_in: [String!]
 
   """All values less than the given value."""
-  text_lt: String
+  title_lt: String
 
   """All values less than or equal the given value."""
-  text_lte: String
+  title_lte: String
 
   """All values greater than the given value."""
-  text_gt: String
+  title_gt: String
 
   """All values greater than or equal the given value."""
-  text_gte: String
+  title_gte: String
 
   """All values containing the given string."""
-  text_contains: String
+  title_contains: String
 
   """All values not containing the given string."""
-  text_not_contains: String
+  title_not_contains: String
 
   """All values starting with the given string."""
-  text_starts_with: String
+  title_starts_with: String
 
   """All values not starting with the given string."""
-  text_not_starts_with: String
+  title_not_starts_with: String
 
   """All values ending with the given string."""
-  text_ends_with: String
+  title_ends_with: String
 
   """All values not ending with the given string."""
-  text_not_ends_with: String
+  title_not_ends_with: String
+  body: String
+
+  """All values that are not equal to given value."""
+  body_not: String
+
+  """All values that are contained in given list."""
+  body_in: [String!]
+
+  """All values that are not contained in given list."""
+  body_not_in: [String!]
+
+  """All values less than the given value."""
+  body_lt: String
+
+  """All values less than or equal the given value."""
+  body_lte: String
+
+  """All values greater than the given value."""
+  body_gt: String
+
+  """All values greater than or equal the given value."""
+  body_gte: String
+
+  """All values containing the given string."""
+  body_contains: String
+
+  """All values not containing the given string."""
+  body_not_contains: String
+
+  """All values starting with the given string."""
+  body_starts_with: String
+
+  """All values not starting with the given string."""
+  body_not_starts_with: String
+
+  """All values ending with the given string."""
+  body_ends_with: String
+
+  """All values not ending with the given string."""
+  body_not_ends_with: String
   updatedAt: DateTime
 
   """All values that are not equal to given value."""
@@ -473,15 +632,522 @@ input CommentWhereInput {
 
   """All values greater than or equal the given value."""
   createdAt_gte: DateTime
-  post: PostWhereInput
   author: UserWhereInput
+  graph: GraphWhereInput
+  source: SummitWhereInput
+  target: SummitWhereInput
 }
 
-input CommentWhereUniqueInput {
+input EdgeWhereUniqueInput {
   id: ID
 }
 
-scalar DateTime
+type Graph implements Node {
+  id: ID!
+  title: String!
+  author: User!
+  summits(where: SummitWhereInput, orderBy: SummitOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Summit!]
+  edges(where: EdgeWhereInput, orderBy: EdgeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Edge!]
+  updatedAt: DateTime!
+  createdAt: DateTime!
+}
+
+"""A connection to a list of items."""
+type GraphConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [GraphEdge]!
+  aggregate: AggregateGraph!
+}
+
+input GraphCreateInput {
+  id: ID
+  title: String!
+  author: UserCreateOneWithoutGraphsInput!
+  summits: SummitCreateManyWithoutGraphsInput
+  edges: EdgeCreateManyWithoutGraphInput
+}
+
+input GraphCreateManyWithoutAuthorInput {
+  create: [GraphCreateWithoutAuthorInput!]
+  connect: [GraphWhereUniqueInput!]
+}
+
+input GraphCreateManyWithoutSummitsInput {
+  create: [GraphCreateWithoutSummitsInput!]
+  connect: [GraphWhereUniqueInput!]
+}
+
+input GraphCreateOneWithoutEdgesInput {
+  create: GraphCreateWithoutEdgesInput
+  connect: GraphWhereUniqueInput
+}
+
+input GraphCreateWithoutAuthorInput {
+  id: ID
+  title: String!
+  summits: SummitCreateManyWithoutGraphsInput
+  edges: EdgeCreateManyWithoutGraphInput
+}
+
+input GraphCreateWithoutEdgesInput {
+  id: ID
+  title: String!
+  author: UserCreateOneWithoutGraphsInput!
+  summits: SummitCreateManyWithoutGraphsInput
+}
+
+input GraphCreateWithoutSummitsInput {
+  id: ID
+  title: String!
+  author: UserCreateOneWithoutGraphsInput!
+  edges: EdgeCreateManyWithoutGraphInput
+}
+
+"""An edge in a connection."""
+type GraphEdge {
+  """The item at the end of the edge."""
+  node: Graph!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum GraphOrderByInput {
+  id_ASC
+  id_DESC
+  title_ASC
+  title_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type GraphPreviousValues {
+  id: ID!
+  title: String!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+}
+
+input GraphScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [GraphScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [GraphScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [GraphScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  title: String
+
+  """All values that are not equal to given value."""
+  title_not: String
+
+  """All values that are contained in given list."""
+  title_in: [String!]
+
+  """All values that are not contained in given list."""
+  title_not_in: [String!]
+
+  """All values less than the given value."""
+  title_lt: String
+
+  """All values less than or equal the given value."""
+  title_lte: String
+
+  """All values greater than the given value."""
+  title_gt: String
+
+  """All values greater than or equal the given value."""
+  title_gte: String
+
+  """All values containing the given string."""
+  title_contains: String
+
+  """All values not containing the given string."""
+  title_not_contains: String
+
+  """All values starting with the given string."""
+  title_starts_with: String
+
+  """All values not starting with the given string."""
+  title_not_starts_with: String
+
+  """All values ending with the given string."""
+  title_ends_with: String
+
+  """All values not ending with the given string."""
+  title_not_ends_with: String
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+}
+
+type GraphSubscriptionPayload {
+  mutation: MutationType!
+  node: Graph
+  updatedFields: [String!]
+  previousValues: GraphPreviousValues
+}
+
+input GraphSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [GraphSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [GraphSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [GraphSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: GraphWhereInput
+}
+
+input GraphUpdateInput {
+  title: String
+  author: UserUpdateOneRequiredWithoutGraphsInput
+  summits: SummitUpdateManyWithoutGraphsInput
+  edges: EdgeUpdateManyWithoutGraphInput
+}
+
+input GraphUpdateManyDataInput {
+  title: String
+}
+
+input GraphUpdateManyMutationInput {
+  title: String
+}
+
+input GraphUpdateManyWithoutAuthorInput {
+  create: [GraphCreateWithoutAuthorInput!]
+  connect: [GraphWhereUniqueInput!]
+  set: [GraphWhereUniqueInput!]
+  disconnect: [GraphWhereUniqueInput!]
+  delete: [GraphWhereUniqueInput!]
+  update: [GraphUpdateWithWhereUniqueWithoutAuthorInput!]
+  updateMany: [GraphUpdateManyWithWhereNestedInput!]
+  deleteMany: [GraphScalarWhereInput!]
+  upsert: [GraphUpsertWithWhereUniqueWithoutAuthorInput!]
+}
+
+input GraphUpdateManyWithoutSummitsInput {
+  create: [GraphCreateWithoutSummitsInput!]
+  connect: [GraphWhereUniqueInput!]
+  set: [GraphWhereUniqueInput!]
+  disconnect: [GraphWhereUniqueInput!]
+  delete: [GraphWhereUniqueInput!]
+  update: [GraphUpdateWithWhereUniqueWithoutSummitsInput!]
+  updateMany: [GraphUpdateManyWithWhereNestedInput!]
+  deleteMany: [GraphScalarWhereInput!]
+  upsert: [GraphUpsertWithWhereUniqueWithoutSummitsInput!]
+}
+
+input GraphUpdateManyWithWhereNestedInput {
+  where: GraphScalarWhereInput!
+  data: GraphUpdateManyDataInput!
+}
+
+input GraphUpdateOneRequiredWithoutEdgesInput {
+  create: GraphCreateWithoutEdgesInput
+  connect: GraphWhereUniqueInput
+  update: GraphUpdateWithoutEdgesDataInput
+  upsert: GraphUpsertWithoutEdgesInput
+}
+
+input GraphUpdateWithoutAuthorDataInput {
+  title: String
+  summits: SummitUpdateManyWithoutGraphsInput
+  edges: EdgeUpdateManyWithoutGraphInput
+}
+
+input GraphUpdateWithoutEdgesDataInput {
+  title: String
+  author: UserUpdateOneRequiredWithoutGraphsInput
+  summits: SummitUpdateManyWithoutGraphsInput
+}
+
+input GraphUpdateWithoutSummitsDataInput {
+  title: String
+  author: UserUpdateOneRequiredWithoutGraphsInput
+  edges: EdgeUpdateManyWithoutGraphInput
+}
+
+input GraphUpdateWithWhereUniqueWithoutAuthorInput {
+  where: GraphWhereUniqueInput!
+  data: GraphUpdateWithoutAuthorDataInput!
+}
+
+input GraphUpdateWithWhereUniqueWithoutSummitsInput {
+  where: GraphWhereUniqueInput!
+  data: GraphUpdateWithoutSummitsDataInput!
+}
+
+input GraphUpsertWithoutEdgesInput {
+  update: GraphUpdateWithoutEdgesDataInput!
+  create: GraphCreateWithoutEdgesInput!
+}
+
+input GraphUpsertWithWhereUniqueWithoutAuthorInput {
+  where: GraphWhereUniqueInput!
+  update: GraphUpdateWithoutAuthorDataInput!
+  create: GraphCreateWithoutAuthorInput!
+}
+
+input GraphUpsertWithWhereUniqueWithoutSummitsInput {
+  where: GraphWhereUniqueInput!
+  update: GraphUpdateWithoutSummitsDataInput!
+  create: GraphCreateWithoutSummitsInput!
+}
+
+input GraphWhereInput {
+  """Logical AND on all given filters."""
+  AND: [GraphWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [GraphWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [GraphWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  title: String
+
+  """All values that are not equal to given value."""
+  title_not: String
+
+  """All values that are contained in given list."""
+  title_in: [String!]
+
+  """All values that are not contained in given list."""
+  title_not_in: [String!]
+
+  """All values less than the given value."""
+  title_lt: String
+
+  """All values less than or equal the given value."""
+  title_lte: String
+
+  """All values greater than the given value."""
+  title_gt: String
+
+  """All values greater than or equal the given value."""
+  title_gte: String
+
+  """All values containing the given string."""
+  title_contains: String
+
+  """All values not containing the given string."""
+  title_not_contains: String
+
+  """All values starting with the given string."""
+  title_starts_with: String
+
+  """All values not starting with the given string."""
+  title_not_starts_with: String
+
+  """All values ending with the given string."""
+  title_ends_with: String
+
+  """All values not ending with the given string."""
+  title_not_ends_with: String
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  author: UserWhereInput
+  summits_every: SummitWhereInput
+  summits_some: SummitWhereInput
+  summits_none: SummitWhereInput
+  edges_every: EdgeWhereInput
+  edges_some: EdgeWhereInput
+  edges_none: EdgeWhereInput
+}
+
+input GraphWhereUniqueInput {
+  id: ID
+}
 
 """Raw JSON value"""
 scalar Json
@@ -494,23 +1160,29 @@ scalar Long
 
 type Mutation {
   createUser(data: UserCreateInput!): User!
-  createPost(data: PostCreateInput!): Post!
-  createComment(data: CommentCreateInput!): Comment!
+  createGraph(data: GraphCreateInput!): Graph!
+  createEdge(data: EdgeCreateInput!): Edge!
+  createSummit(data: SummitCreateInput!): Summit!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
-  updatePost(data: PostUpdateInput!, where: PostWhereUniqueInput!): Post
-  updateComment(data: CommentUpdateInput!, where: CommentWhereUniqueInput!): Comment
+  updateGraph(data: GraphUpdateInput!, where: GraphWhereUniqueInput!): Graph
+  updateEdge(data: EdgeUpdateInput!, where: EdgeWhereUniqueInput!): Edge
+  updateSummit(data: SummitUpdateInput!, where: SummitWhereUniqueInput!): Summit
   deleteUser(where: UserWhereUniqueInput!): User
-  deletePost(where: PostWhereUniqueInput!): Post
-  deleteComment(where: CommentWhereUniqueInput!): Comment
+  deleteGraph(where: GraphWhereUniqueInput!): Graph
+  deleteEdge(where: EdgeWhereUniqueInput!): Edge
+  deleteSummit(where: SummitWhereUniqueInput!): Summit
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
-  upsertPost(where: PostWhereUniqueInput!, create: PostCreateInput!, update: PostUpdateInput!): Post!
-  upsertComment(where: CommentWhereUniqueInput!, create: CommentCreateInput!, update: CommentUpdateInput!): Comment!
+  upsertGraph(where: GraphWhereUniqueInput!, create: GraphCreateInput!, update: GraphUpdateInput!): Graph!
+  upsertEdge(where: EdgeWhereUniqueInput!, create: EdgeCreateInput!, update: EdgeUpdateInput!): Edge!
+  upsertSummit(where: SummitWhereUniqueInput!, create: SummitCreateInput!, update: SummitUpdateInput!): Summit!
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
-  updateManyPosts(data: PostUpdateManyMutationInput!, where: PostWhereInput): BatchPayload!
-  updateManyComments(data: CommentUpdateManyMutationInput!, where: CommentWhereInput): BatchPayload!
+  updateManyGraphs(data: GraphUpdateManyMutationInput!, where: GraphWhereInput): BatchPayload!
+  updateManyEdges(data: EdgeUpdateManyMutationInput!, where: EdgeWhereInput): BatchPayload!
+  updateManySummits(data: SummitUpdateManyMutationInput!, where: SummitWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
-  deleteManyPosts(where: PostWhereInput): BatchPayload!
-  deleteManyComments(where: CommentWhereInput): BatchPayload!
+  deleteManyGraphs(where: GraphWhereInput): BatchPayload!
+  deleteManyEdges(where: EdgeWhereInput): BatchPayload!
+  deleteManySummits(where: SummitWhereInput): BatchPayload!
   executeRaw(database: PrismaDatabase, query: String!): Json!
 }
 
@@ -541,104 +1213,151 @@ type PageInfo {
   endCursor: String
 }
 
-type Post implements Node {
+enum PrismaDatabase {
+  default
+}
+
+type Query {
+  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
+  graphs(where: GraphWhereInput, orderBy: GraphOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Graph]!
+  edges(where: EdgeWhereInput, orderBy: EdgeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Edge]!
+  summits(where: SummitWhereInput, orderBy: SummitOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Summit]!
+  user(where: UserWhereUniqueInput!): User
+  graph(where: GraphWhereUniqueInput!): Graph
+  edge(where: EdgeWhereUniqueInput!): Edge
+  summit(where: SummitWhereUniqueInput!): Summit
+  usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+  graphsConnection(where: GraphWhereInput, orderBy: GraphOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): GraphConnection!
+  edgesConnection(where: EdgeWhereInput, orderBy: EdgeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EdgeConnection!
+  summitsConnection(where: SummitWhereInput, orderBy: SummitOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SummitConnection!
+
+  """Fetches an object given its ID"""
+  node(
+    """The ID of an object"""
+    id: ID!
+  ): Node
+}
+
+type Subscription {
+  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+  graph(where: GraphSubscriptionWhereInput): GraphSubscriptionPayload
+  edge(where: EdgeSubscriptionWhereInput): EdgeSubscriptionPayload
+  summit(where: SummitSubscriptionWhereInput): SummitSubscriptionPayload
+}
+
+type Summit implements Node {
   id: ID!
+  author: User!
+  graphs(where: GraphWhereInput, orderBy: GraphOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Graph!]
+  edges(where: EdgeWhereInput, orderBy: EdgeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Edge!]
   title: String!
   body: String!
-  published: Boolean!
-  author: User!
-  comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
   updatedAt: DateTime!
   createdAt: DateTime!
 }
 
 """A connection to a list of items."""
-type PostConnection {
+type SummitConnection {
   """Information to aid in pagination."""
   pageInfo: PageInfo!
 
   """A list of edges."""
-  edges: [PostEdge]!
-  aggregate: AggregatePost!
+  edges: [SummitEdge]!
+  aggregate: AggregateSummit!
 }
 
-input PostCreateInput {
+input SummitCreateInput {
   id: ID
   title: String!
   body: String!
-  published: Boolean!
-  author: UserCreateOneWithoutPostsInput!
-  comments: CommentCreateManyWithoutPostInput
+  author: UserCreateOneWithoutSummitsInput!
+  graphs: GraphCreateManyWithoutSummitsInput
+  edges: EdgeCreateManyWithoutSourceInput
 }
 
-input PostCreateManyWithoutAuthorInput {
-  create: [PostCreateWithoutAuthorInput!]
-  connect: [PostWhereUniqueInput!]
+input SummitCreateManyWithoutAuthorInput {
+  create: [SummitCreateWithoutAuthorInput!]
+  connect: [SummitWhereUniqueInput!]
 }
 
-input PostCreateOneWithoutCommentsInput {
-  create: PostCreateWithoutCommentsInput
-  connect: PostWhereUniqueInput
+input SummitCreateManyWithoutGraphsInput {
+  create: [SummitCreateWithoutGraphsInput!]
+  connect: [SummitWhereUniqueInput!]
 }
 
-input PostCreateWithoutAuthorInput {
+input SummitCreateOneInput {
+  create: SummitCreateInput
+  connect: SummitWhereUniqueInput
+}
+
+input SummitCreateOneWithoutEdgesInput {
+  create: SummitCreateWithoutEdgesInput
+  connect: SummitWhereUniqueInput
+}
+
+input SummitCreateWithoutAuthorInput {
   id: ID
   title: String!
   body: String!
-  published: Boolean!
-  comments: CommentCreateManyWithoutPostInput
+  graphs: GraphCreateManyWithoutSummitsInput
+  edges: EdgeCreateManyWithoutSourceInput
 }
 
-input PostCreateWithoutCommentsInput {
+input SummitCreateWithoutEdgesInput {
   id: ID
   title: String!
   body: String!
-  published: Boolean!
-  author: UserCreateOneWithoutPostsInput!
+  author: UserCreateOneWithoutSummitsInput!
+  graphs: GraphCreateManyWithoutSummitsInput
+}
+
+input SummitCreateWithoutGraphsInput {
+  id: ID
+  title: String!
+  body: String!
+  author: UserCreateOneWithoutSummitsInput!
+  edges: EdgeCreateManyWithoutSourceInput
 }
 
 """An edge in a connection."""
-type PostEdge {
+type SummitEdge {
   """The item at the end of the edge."""
-  node: Post!
+  node: Summit!
 
   """A cursor for use in pagination."""
   cursor: String!
 }
 
-enum PostOrderByInput {
+enum SummitOrderByInput {
   id_ASC
   id_DESC
   title_ASC
   title_DESC
   body_ASC
   body_DESC
-  published_ASC
-  published_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
   createdAt_DESC
 }
 
-type PostPreviousValues {
+type SummitPreviousValues {
   id: ID!
   title: String!
   body: String!
-  published: Boolean!
   updatedAt: DateTime!
   createdAt: DateTime!
 }
 
-input PostScalarWhereInput {
+input SummitScalarWhereInput {
   """Logical AND on all given filters."""
-  AND: [PostScalarWhereInput!]
+  AND: [SummitScalarWhereInput!]
 
   """Logical OR on all given filters."""
-  OR: [PostScalarWhereInput!]
+  OR: [SummitScalarWhereInput!]
 
   """Logical NOT on all given filters combined by AND."""
-  NOT: [PostScalarWhereInput!]
+  NOT: [SummitScalarWhereInput!]
   id: ID
 
   """All values that are not equal to given value."""
@@ -759,10 +1478,6 @@ input PostScalarWhereInput {
 
   """All values not ending with the given string."""
   body_not_ends_with: String
-  published: Boolean
-
-  """All values that are not equal to given value."""
-  published_not: Boolean
   updatedAt: DateTime
 
   """All values that are not equal to given value."""
@@ -809,24 +1524,26 @@ input PostScalarWhereInput {
   createdAt_gte: DateTime
 }
 
-type PostSubscriptionPayload {
+type SummitSubscriptionPayload {
   mutation: MutationType!
-  node: Post
+  node: Summit
   updatedFields: [String!]
-  previousValues: PostPreviousValues
+  previousValues: SummitPreviousValues
 }
 
-input PostSubscriptionWhereInput {
+input SummitSubscriptionWhereInput {
   """Logical AND on all given filters."""
-  AND: [PostSubscriptionWhereInput!]
+  AND: [SummitSubscriptionWhereInput!]
 
   """Logical OR on all given filters."""
-  OR: [PostSubscriptionWhereInput!]
+  OR: [SummitSubscriptionWhereInput!]
 
   """Logical NOT on all given filters combined by AND."""
-  NOT: [PostSubscriptionWhereInput!]
+  NOT: [SummitSubscriptionWhereInput!]
 
-  """The subscription event gets dispatched when it's listed in mutation_in"""
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
   mutation_in: [MutationType!]
 
   """
@@ -843,92 +1560,140 @@ input PostSubscriptionWhereInput {
   The subscription event gets only dispatched when some of the field names included in this list have been updated
   """
   updatedFields_contains_some: [String!]
-  node: PostWhereInput
+  node: SummitWhereInput
 }
 
-input PostUpdateInput {
+input SummitUpdateDataInput {
   title: String
   body: String
-  published: Boolean
-  author: UserUpdateOneRequiredWithoutPostsInput
-  comments: CommentUpdateManyWithoutPostInput
+  author: UserUpdateOneRequiredWithoutSummitsInput
+  graphs: GraphUpdateManyWithoutSummitsInput
+  edges: EdgeUpdateManyWithoutSourceInput
 }
 
-input PostUpdateManyDataInput {
+input SummitUpdateInput {
   title: String
   body: String
-  published: Boolean
+  author: UserUpdateOneRequiredWithoutSummitsInput
+  graphs: GraphUpdateManyWithoutSummitsInput
+  edges: EdgeUpdateManyWithoutSourceInput
 }
 
-input PostUpdateManyMutationInput {
+input SummitUpdateManyDataInput {
   title: String
   body: String
-  published: Boolean
 }
 
-input PostUpdateManyWithoutAuthorInput {
-  create: [PostCreateWithoutAuthorInput!]
-  connect: [PostWhereUniqueInput!]
-  set: [PostWhereUniqueInput!]
-  disconnect: [PostWhereUniqueInput!]
-  delete: [PostWhereUniqueInput!]
-  update: [PostUpdateWithWhereUniqueWithoutAuthorInput!]
-  updateMany: [PostUpdateManyWithWhereNestedInput!]
-  deleteMany: [PostScalarWhereInput!]
-  upsert: [PostUpsertWithWhereUniqueWithoutAuthorInput!]
-}
-
-input PostUpdateManyWithWhereNestedInput {
-  where: PostScalarWhereInput!
-  data: PostUpdateManyDataInput!
-}
-
-input PostUpdateOneRequiredWithoutCommentsInput {
-  create: PostCreateWithoutCommentsInput
-  connect: PostWhereUniqueInput
-  update: PostUpdateWithoutCommentsDataInput
-  upsert: PostUpsertWithoutCommentsInput
-}
-
-input PostUpdateWithoutAuthorDataInput {
+input SummitUpdateManyMutationInput {
   title: String
   body: String
-  published: Boolean
-  comments: CommentUpdateManyWithoutPostInput
 }
 
-input PostUpdateWithoutCommentsDataInput {
+input SummitUpdateManyWithoutAuthorInput {
+  create: [SummitCreateWithoutAuthorInput!]
+  connect: [SummitWhereUniqueInput!]
+  set: [SummitWhereUniqueInput!]
+  disconnect: [SummitWhereUniqueInput!]
+  delete: [SummitWhereUniqueInput!]
+  update: [SummitUpdateWithWhereUniqueWithoutAuthorInput!]
+  updateMany: [SummitUpdateManyWithWhereNestedInput!]
+  deleteMany: [SummitScalarWhereInput!]
+  upsert: [SummitUpsertWithWhereUniqueWithoutAuthorInput!]
+}
+
+input SummitUpdateManyWithoutGraphsInput {
+  create: [SummitCreateWithoutGraphsInput!]
+  connect: [SummitWhereUniqueInput!]
+  set: [SummitWhereUniqueInput!]
+  disconnect: [SummitWhereUniqueInput!]
+  delete: [SummitWhereUniqueInput!]
+  update: [SummitUpdateWithWhereUniqueWithoutGraphsInput!]
+  updateMany: [SummitUpdateManyWithWhereNestedInput!]
+  deleteMany: [SummitScalarWhereInput!]
+  upsert: [SummitUpsertWithWhereUniqueWithoutGraphsInput!]
+}
+
+input SummitUpdateManyWithWhereNestedInput {
+  where: SummitScalarWhereInput!
+  data: SummitUpdateManyDataInput!
+}
+
+input SummitUpdateOneRequiredInput {
+  create: SummitCreateInput
+  connect: SummitWhereUniqueInput
+  update: SummitUpdateDataInput
+  upsert: SummitUpsertNestedInput
+}
+
+input SummitUpdateOneRequiredWithoutEdgesInput {
+  create: SummitCreateWithoutEdgesInput
+  connect: SummitWhereUniqueInput
+  update: SummitUpdateWithoutEdgesDataInput
+  upsert: SummitUpsertWithoutEdgesInput
+}
+
+input SummitUpdateWithoutAuthorDataInput {
   title: String
   body: String
-  published: Boolean
-  author: UserUpdateOneRequiredWithoutPostsInput
+  graphs: GraphUpdateManyWithoutSummitsInput
+  edges: EdgeUpdateManyWithoutSourceInput
 }
 
-input PostUpdateWithWhereUniqueWithoutAuthorInput {
-  where: PostWhereUniqueInput!
-  data: PostUpdateWithoutAuthorDataInput!
+input SummitUpdateWithoutEdgesDataInput {
+  title: String
+  body: String
+  author: UserUpdateOneRequiredWithoutSummitsInput
+  graphs: GraphUpdateManyWithoutSummitsInput
 }
 
-input PostUpsertWithoutCommentsInput {
-  update: PostUpdateWithoutCommentsDataInput!
-  create: PostCreateWithoutCommentsInput!
+input SummitUpdateWithoutGraphsDataInput {
+  title: String
+  body: String
+  author: UserUpdateOneRequiredWithoutSummitsInput
+  edges: EdgeUpdateManyWithoutSourceInput
 }
 
-input PostUpsertWithWhereUniqueWithoutAuthorInput {
-  where: PostWhereUniqueInput!
-  update: PostUpdateWithoutAuthorDataInput!
-  create: PostCreateWithoutAuthorInput!
+input SummitUpdateWithWhereUniqueWithoutAuthorInput {
+  where: SummitWhereUniqueInput!
+  data: SummitUpdateWithoutAuthorDataInput!
 }
 
-input PostWhereInput {
+input SummitUpdateWithWhereUniqueWithoutGraphsInput {
+  where: SummitWhereUniqueInput!
+  data: SummitUpdateWithoutGraphsDataInput!
+}
+
+input SummitUpsertNestedInput {
+  update: SummitUpdateDataInput!
+  create: SummitCreateInput!
+}
+
+input SummitUpsertWithoutEdgesInput {
+  update: SummitUpdateWithoutEdgesDataInput!
+  create: SummitCreateWithoutEdgesInput!
+}
+
+input SummitUpsertWithWhereUniqueWithoutAuthorInput {
+  where: SummitWhereUniqueInput!
+  update: SummitUpdateWithoutAuthorDataInput!
+  create: SummitCreateWithoutAuthorInput!
+}
+
+input SummitUpsertWithWhereUniqueWithoutGraphsInput {
+  where: SummitWhereUniqueInput!
+  update: SummitUpdateWithoutGraphsDataInput!
+  create: SummitCreateWithoutGraphsInput!
+}
+
+input SummitWhereInput {
   """Logical AND on all given filters."""
-  AND: [PostWhereInput!]
+  AND: [SummitWhereInput!]
 
   """Logical OR on all given filters."""
-  OR: [PostWhereInput!]
+  OR: [SummitWhereInput!]
 
   """Logical NOT on all given filters combined by AND."""
-  NOT: [PostWhereInput!]
+  NOT: [SummitWhereInput!]
   id: ID
 
   """All values that are not equal to given value."""
@@ -1049,10 +1814,6 @@ input PostWhereInput {
 
   """All values not ending with the given string."""
   body_not_ends_with: String
-  published: Boolean
-
-  """All values that are not equal to given value."""
-  published_not: Boolean
   updatedAt: DateTime
 
   """All values that are not equal to given value."""
@@ -1098,41 +1859,16 @@ input PostWhereInput {
   """All values greater than or equal the given value."""
   createdAt_gte: DateTime
   author: UserWhereInput
-  comments_every: CommentWhereInput
-  comments_some: CommentWhereInput
-  comments_none: CommentWhereInput
+  graphs_every: GraphWhereInput
+  graphs_some: GraphWhereInput
+  graphs_none: GraphWhereInput
+  edges_every: EdgeWhereInput
+  edges_some: EdgeWhereInput
+  edges_none: EdgeWhereInput
 }
 
-input PostWhereUniqueInput {
+input SummitWhereUniqueInput {
   id: ID
-}
-
-enum PrismaDatabase {
-  default
-}
-
-type Query {
-  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
-  posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post]!
-  comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment]!
-  user(where: UserWhereUniqueInput!): User
-  post(where: PostWhereUniqueInput!): Post
-  comment(where: CommentWhereUniqueInput!): Comment
-  usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
-  postsConnection(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostConnection!
-  commentsConnection(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CommentConnection!
-
-  """Fetches an object given its ID"""
-  node(
-    """The ID of an object"""
-    id: ID!
-  ): Node
-}
-
-type Subscription {
-  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
-  post(where: PostSubscriptionWhereInput): PostSubscriptionPayload
-  comment(where: CommentSubscriptionWhereInput): CommentSubscriptionPayload
 }
 
 type User implements Node {
@@ -1140,8 +1876,9 @@ type User implements Node {
   name: String!
   email: String!
   password: String!
-  posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post!]
-  comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
+  graphs(where: GraphWhereInput, orderBy: GraphOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Graph!]
+  summits(where: SummitWhereInput, orderBy: SummitOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Summit!]
+  edges(where: EdgeWhereInput, orderBy: EdgeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Edge!]
   updatedAt: DateTime!
   createdAt: DateTime!
 }
@@ -1161,34 +1898,51 @@ input UserCreateInput {
   name: String!
   email: String!
   password: String!
-  posts: PostCreateManyWithoutAuthorInput
-  comments: CommentCreateManyWithoutAuthorInput
+  graphs: GraphCreateManyWithoutAuthorInput
+  summits: SummitCreateManyWithoutAuthorInput
+  edges: EdgeCreateManyWithoutAuthorInput
 }
 
-input UserCreateOneWithoutCommentsInput {
-  create: UserCreateWithoutCommentsInput
+input UserCreateOneWithoutEdgesInput {
+  create: UserCreateWithoutEdgesInput
   connect: UserWhereUniqueInput
 }
 
-input UserCreateOneWithoutPostsInput {
-  create: UserCreateWithoutPostsInput
+input UserCreateOneWithoutGraphsInput {
+  create: UserCreateWithoutGraphsInput
   connect: UserWhereUniqueInput
 }
 
-input UserCreateWithoutCommentsInput {
+input UserCreateOneWithoutSummitsInput {
+  create: UserCreateWithoutSummitsInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateWithoutEdgesInput {
   id: ID
   name: String!
   email: String!
   password: String!
-  posts: PostCreateManyWithoutAuthorInput
+  graphs: GraphCreateManyWithoutAuthorInput
+  summits: SummitCreateManyWithoutAuthorInput
 }
 
-input UserCreateWithoutPostsInput {
+input UserCreateWithoutGraphsInput {
   id: ID
   name: String!
   email: String!
   password: String!
-  comments: CommentCreateManyWithoutAuthorInput
+  summits: SummitCreateManyWithoutAuthorInput
+  edges: EdgeCreateManyWithoutAuthorInput
+}
+
+input UserCreateWithoutSummitsInput {
+  id: ID
+  name: String!
+  email: String!
+  password: String!
+  graphs: GraphCreateManyWithoutAuthorInput
+  edges: EdgeCreateManyWithoutAuthorInput
 }
 
 """An edge in a connection."""
@@ -1241,7 +1995,9 @@ input UserSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [UserSubscriptionWhereInput!]
 
-  """The subscription event gets dispatched when it's listed in mutation_in"""
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
   mutation_in: [MutationType!]
 
   """
@@ -1265,8 +2021,9 @@ input UserUpdateInput {
   name: String
   email: String
   password: String
-  posts: PostUpdateManyWithoutAuthorInput
-  comments: CommentUpdateManyWithoutAuthorInput
+  graphs: GraphUpdateManyWithoutAuthorInput
+  summits: SummitUpdateManyWithoutAuthorInput
+  edges: EdgeUpdateManyWithoutAuthorInput
 }
 
 input UserUpdateManyMutationInput {
@@ -1275,42 +2032,64 @@ input UserUpdateManyMutationInput {
   password: String
 }
 
-input UserUpdateOneRequiredWithoutCommentsInput {
-  create: UserCreateWithoutCommentsInput
+input UserUpdateOneRequiredWithoutEdgesInput {
+  create: UserCreateWithoutEdgesInput
   connect: UserWhereUniqueInput
-  update: UserUpdateWithoutCommentsDataInput
-  upsert: UserUpsertWithoutCommentsInput
+  update: UserUpdateWithoutEdgesDataInput
+  upsert: UserUpsertWithoutEdgesInput
 }
 
-input UserUpdateOneRequiredWithoutPostsInput {
-  create: UserCreateWithoutPostsInput
+input UserUpdateOneRequiredWithoutGraphsInput {
+  create: UserCreateWithoutGraphsInput
   connect: UserWhereUniqueInput
-  update: UserUpdateWithoutPostsDataInput
-  upsert: UserUpsertWithoutPostsInput
+  update: UserUpdateWithoutGraphsDataInput
+  upsert: UserUpsertWithoutGraphsInput
 }
 
-input UserUpdateWithoutCommentsDataInput {
+input UserUpdateOneRequiredWithoutSummitsInput {
+  create: UserCreateWithoutSummitsInput
+  connect: UserWhereUniqueInput
+  update: UserUpdateWithoutSummitsDataInput
+  upsert: UserUpsertWithoutSummitsInput
+}
+
+input UserUpdateWithoutEdgesDataInput {
   name: String
   email: String
   password: String
-  posts: PostUpdateManyWithoutAuthorInput
+  graphs: GraphUpdateManyWithoutAuthorInput
+  summits: SummitUpdateManyWithoutAuthorInput
 }
 
-input UserUpdateWithoutPostsDataInput {
+input UserUpdateWithoutGraphsDataInput {
   name: String
   email: String
   password: String
-  comments: CommentUpdateManyWithoutAuthorInput
+  summits: SummitUpdateManyWithoutAuthorInput
+  edges: EdgeUpdateManyWithoutAuthorInput
 }
 
-input UserUpsertWithoutCommentsInput {
-  update: UserUpdateWithoutCommentsDataInput!
-  create: UserCreateWithoutCommentsInput!
+input UserUpdateWithoutSummitsDataInput {
+  name: String
+  email: String
+  password: String
+  graphs: GraphUpdateManyWithoutAuthorInput
+  edges: EdgeUpdateManyWithoutAuthorInput
 }
 
-input UserUpsertWithoutPostsInput {
-  update: UserUpdateWithoutPostsDataInput!
-  create: UserCreateWithoutPostsInput!
+input UserUpsertWithoutEdgesInput {
+  update: UserUpdateWithoutEdgesDataInput!
+  create: UserCreateWithoutEdgesInput!
+}
+
+input UserUpsertWithoutGraphsInput {
+  update: UserUpdateWithoutGraphsDataInput!
+  create: UserCreateWithoutGraphsInput!
+}
+
+input UserUpsertWithoutSummitsInput {
+  update: UserUpdateWithoutSummitsDataInput!
+  create: UserCreateWithoutSummitsInput!
 }
 
 input UserWhereInput {
@@ -1526,12 +2305,15 @@ input UserWhereInput {
 
   """All values greater than or equal the given value."""
   createdAt_gte: DateTime
-  posts_every: PostWhereInput
-  posts_some: PostWhereInput
-  posts_none: PostWhereInput
-  comments_every: CommentWhereInput
-  comments_some: CommentWhereInput
-  comments_none: CommentWhereInput
+  graphs_every: GraphWhereInput
+  graphs_some: GraphWhereInput
+  graphs_none: GraphWhereInput
+  summits_every: SummitWhereInput
+  summits_some: SummitWhereInput
+  summits_none: SummitWhereInput
+  edges_every: EdgeWhereInput
+  edges_some: EdgeWhereInput
+  edges_none: EdgeWhereInput
 }
 
 input UserWhereUniqueInput {

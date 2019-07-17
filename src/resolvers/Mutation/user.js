@@ -1,10 +1,10 @@
 import bcrypt from "bcryptjs";
-import getUserId from "../utils/getUserId";
-import generateToken from "../utils/generateToken";
+import getUserId from "../../utils/getUserId";
+import generateToken from "../../utils/generateToken";
 
-import hashPassword from "../utils/hashPassword";
+import hashPassword from "../../utils/hashPassword";
 
-const Mutation = {
+const userMutation = {
   createUser: async (parent, { data }, { prisma }, info) => {
     const password = await hashPassword(data.password);
 
@@ -53,4 +53,4 @@ const Mutation = {
   }
 };
 
-export { Mutation as default };
+export default userMutation;
